@@ -154,14 +154,19 @@ else
     local sweep = DT_HUD.GetSweep()
 
     --- @param pos Vector
+    --- @return number
+    local function CalcAngle(pos)
+      return math.AngleDifference((pos - myPos):Angle().y, myAng.y)
+    end
+
+    --- @param pos Vector
     --- @param important boolean
     --- @return number?, number?
     local function ToRadarCoords(pos, important)
       local dist = (myPos-pos):Length2D()
       if dist > range and not important then return end
       local coords = Vector(radius*math.min(1, dist/range)*0.9, 0)
-      local ang = -math.AngleDifference((pos - myPos):Angle().y, myAng.y)
-      coords:Rotate(Angle(0, ang - 90, 0))
+      coords:Rotate(Angle(0, -CalcAngle(pos) - 90, 0))
       return coords.x, coords.y
     end
 
@@ -188,8 +193,8 @@ else
       sweepRing:Stroke(DT_HUD.Border)
     end
 
-    -- draw ents
-    --[[for _, data in pairs(RADAR_DATA) do
+    -- draw ents (todo: rewrite this mess)
+    for _, data in pairs(RADAR_DATA) do
       local ent = data.Entity
       if not IsValid(ent) then continue end
       local time = CurTime() - data.LastUpdate
@@ -198,7 +203,7 @@ else
       local usePVS = sweep == -1 and data.InPVS
       local entPos = usePVS and ent:GetPos()
         or data.Pos + data.Vel * time
-      local x, y = ToRadarCoords(entPos)
+      local x, y = ToRadarCoords(entPos, false)
       if not x or not y then continue end
       local ang = CalcAngle(entPos)
       local tr = util.TraceLine({
@@ -209,11 +214,12 @@ else
       local visible = not tr.Hit and math.abs(ang) < 45
       local function DrawOnRadar(color)
         local height = entPos.z - myPos.z
-        if height > 100 then ctx:PrepareTriangle(x, y, 0.6, -90)
-        elseif height < -100 then ctx:PrepareTriangle(x, y, 0.6, 90)
-        else ctx:PrepareDiamond(x, y, 0.6) end
-        if visible then ctx:Fill(color)
-        else ctx:Stroke(color) end
+        local icon
+        if height > 100 then icon = ctx:CreateTriangle(x, y, 0.6, -90)
+        elseif height < -100 then icon = ctx:CreateTriangle(x, y, 0.6, 90)
+        else icon = ctx:CreateDiamond(x, y, 0.6) end
+        if visible then icon:Fill(color)
+        else icon:Stroke(color) end
       end
       if ent:IsWeapon() then
         if IsValid(ent:GetOwner()) then continue end
@@ -221,8 +227,7 @@ else
         if sweep ~= -1 then color.a = (1 - fade)*255 end
         if DT_HUD.RadarIcons:GetBool() then
           local icon = DT_HUD.WeaponIcon
-          ctx:PrepareSquare(x, y, 1.25)
-          ctx:Fill(color, icon)
+          ctx:CreateSquare(x, y, 1.25):Fill(color, icon)
         else DrawOnRadar(color) end
         color.a = 255
       elseif IsVehicle(ent) then
@@ -231,8 +236,7 @@ else
         if sweep ~= -1 then color.a = (1 - fade)*255 end
         if DT_HUD.RadarIcons:GetBool() then
           local icon = DT_HUD.GetVehicleIcon(ent)
-          ctx:PrepareSquare(x, y, 1.5)
-          ctx:Fill(color, icon)
+          ctx:CreateSquare(x, y, 1.5):Fill(color, icon)
         else DrawOnRadar(color) end
         color.a = 255
       else
@@ -241,7 +245,7 @@ else
         DrawOnRadar(color)
         color.a = 255
       end
-    end]]
+    end
 
     -- draw last death
     if LAST_DEATH and DT_HUD.RadarLastDeath:GetBool() then
