@@ -27,9 +27,9 @@ else
   DT_HUD.EntityInfoEnabled = DT_Lib.ClientConVar("dt_hud_entity_info", "1")
   DT_HUD.EntityInfoAbove = DT_Lib.ClientConVar("dt_hud_entity_info_above", "1")
 
-  local ENTITY_INFO = {}
+  DT_HUD.EntityInfo = {}
   net.Receive("DT_HUD/EntityInfo", function()
-    ENTITY_INFO = {
+    DT_HUD.EntityInfo = {
       Entity = net.ReadEntity(),
       Health = net.ReadFloat(),
       MaxHealth = net.ReadFloat(),
@@ -38,9 +38,9 @@ else
   end)
 
   local function DisplayEntityInfo()
-    local ent = ENTITY_INFO.Entity
-    local health = ENTITY_INFO.Health
-    local maxHealth = ENTITY_INFO.MaxHealth
+    local ent = DT_HUD.EntityInfo.Entity
+    local health = DT_HUD.EntityInfo.Health
+    local maxHealth = DT_HUD.EntityInfo.MaxHealth
     if not IsValid(ent) then return false end
     return ent:DT_IsTarget()
       or (ent:GetClass() == "prop_physics" and (health > 0 or maxHealth > 1))
@@ -52,11 +52,11 @@ else
     local ply = LocalPlayer()
     if ply:InVehicle() then return end
     local ent = ply:GetEyeTrace().Entity
-    if ent == ENTITY_INFO.Entity and DisplayEntityInfo() then
-      local health = ENTITY_INFO.Health
-      local maxHealth = ENTITY_INFO.MaxHealth
+    if ent == DT_HUD.EntityInfo.Entity and DisplayEntityInfo() then
+      local health = DT_HUD.EntityInfo.Health
+      local maxHealth = DT_HUD.EntityInfo.MaxHealth
       local text = ent:IsPlayer() and ent:Nick() or language.GetPhrase(ent:GetClass())
-      local color = DT_HUD.GetDispositionColor(ENTITY_INFO.Disposition)
+      local color = DT_HUD.GetDispositionColor(DT_HUD.EntityInfo.Disposition)
       local ctx = DT_HUD.DrawContext()
       if DT_HUD.EntityInfoAbove:GetBool() then
         local pos, height = ent:GetPos(), ent:OBBMaxs().z

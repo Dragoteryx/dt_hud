@@ -96,9 +96,9 @@ if CLIENT then
     cvars.AddChangeCallback(green:GetName(), function() color.g = green:GetInt() end)
     cvars.AddChangeCallback(blue:GetName(), function() color.b = blue:GetInt() end)
     local color = { Red = red, Green = green, Blue = blue, Value = color }
-    function color:AddToPanel(panel, label)
+    function color:AddToPanel(panel)
       panel:AddControl("color", {
-        label = label,
+        label = "#dt_hud.menu.client.colors."..name,
         red = red:GetName(),
         green = green:GetName(),
         blue = blue:GetName()
@@ -109,6 +109,11 @@ if CLIENT then
       green:Revert()
       blue:Revert()
     end
+    function color:Randomize()
+      red:SetInt(math.random(0, 255))
+      green:SetInt(math.random(0, 255))
+      blue:SetInt(math.random(0, 255))
+    end
     return color
   end
 
@@ -116,19 +121,19 @@ if CLIENT then
   DT_HUD.FullHealthColor = HUDColor("full_health", DT_Lib.CLR_GREEN)
   DT_HUD.LowHealthColor = HUDColor("low_health", DT_Lib.CLR_RED)
   DT_HUD.ArmorColor = HUDColor("armor", DT_Lib.CLR_ORANGE)
-  DT_HUD.AmmoColor = HUDColor("ammo", DT_Lib.CLR_SOFT_WHITE)
-  DT_HUD.Ammo2Color = HUDColor("ammo2", DT_Lib.CLR_ORANGE)
+  DT_HUD.PrimaryAmmoColor = HUDColor("primary_ammo", DT_Lib.CLR_SOFT_WHITE)
+  DT_HUD.SecondaryAmmoColor = HUDColor("secondary_ammo", DT_Lib.CLR_ORANGE)
   DT_HUD.NeutralColor = HUDColor("neutral", DT_Lib.CLR_SOFT_WHITE)
-  DT_HUD.AllyColor = HUDColor("ally", DT_Lib.CLR_GREEN)
-  DT_HUD.EnemyColor = HUDColor("enemy", DT_Lib.CLR_RED)
-  DT_HUD.WeaponColor = HUDColor("weapon", DT_Lib.CLR_ORANGE)
-  DT_HUD.VehicleColor = HUDColor("vehicle", DT_Lib.CLR_ORANGE)
+  DT_HUD.AlliesColor = HUDColor("allies", DT_Lib.CLR_GREEN)
+  DT_HUD.EnemiesColor = HUDColor("enemies", DT_Lib.CLR_RED)
+  DT_HUD.WeaponsColor = HUDColor("weapons", DT_Lib.CLR_ORANGE)
+  DT_HUD.VehiclesColor = HUDColor("vehicles", DT_Lib.CLR_ORANGE)
 
   function DT_HUD.GetDispositionColor(disp)
     if disp == D_HT or disp == D_FR then
-      return DT_HUD.EnemyColor.Value
+      return DT_HUD.EnemiesColor.Value
     elseif disp == D_LI then
-      return DT_HUD.AllyColor.Value
+      return DT_HUD.AlliesColor.Value
     else
       return DT_HUD.NeutralColor.Value
     end
@@ -139,13 +144,27 @@ if CLIENT then
     DT_HUD.FullHealthColor:Reset()
     DT_HUD.LowHealthColor:Reset()
     DT_HUD.ArmorColor:Reset()
-    DT_HUD.AmmoColor:Reset()
-    DT_HUD.Ammo2Color:Reset()
+    DT_HUD.PrimaryAmmoColor:Reset()
+    DT_HUD.SecondaryAmmoColor:Reset()
     DT_HUD.NeutralColor:Reset()
-    DT_HUD.AllyColor:Reset()
-    DT_HUD.EnemyColor:Reset()
-    DT_HUD.VehicleColor:Reset()
-    DT_HUD.WeaponColor:Reset()
+    DT_HUD.AlliesColor:Reset()
+    DT_HUD.EnemiesColor:Reset()
+    DT_HUD.VehiclesColor:Reset()
+    DT_HUD.WeaponsColor:Reset()
+  end)
+
+  concommand.Add("dt_hud_cmd_randomize_colors", function()
+    DT_HUD.MainColor:Randomize()
+    DT_HUD.FullHealthColor:Randomize()
+    DT_HUD.LowHealthColor:Randomize()
+    DT_HUD.ArmorColor:Randomize()
+    DT_HUD.PrimaryAmmoColor:Randomize()
+    DT_HUD.SecondaryAmmoColor:Randomize()
+    DT_HUD.NeutralColor:Randomize()
+    DT_HUD.AlliesColor:Randomize()
+    DT_HUD.EnemiesColor:Randomize()
+    DT_HUD.VehiclesColor:Randomize()
+    DT_HUD.WeaponsColor:Randomize()
   end)
 
 end

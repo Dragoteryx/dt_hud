@@ -1,14 +1,14 @@
-DT_HUD.AmmoEnabled = DT_Lib.ClientConVar("dt_hud_ammo", "1")
+DT_HUD.WeaponEnabled = DT_Lib.ClientConVar("dt_hud_weapon", "1")
 DT_HUD.WeaponReload = DT_Lib.ClientConVar("dt_hud_weapon_reload", "1")
 DT_HUD.WeaponReloadCrosshair = DT_Lib.ClientConVar("dt_hud_weapon_reload_crosshair", "1")
 
 hook.Add("DT_HUD/ShouldDraw", "DT_HUD/HideAmmo", function(name)
-  if not DT_HUD.AmmoEnabled:GetBool() then return end
+  if not DT_HUD.WeaponEnabled:GetBool() then return end
   if name == "CHudAmmo" or name == "CHudSecondaryAmmo" then return false end
 end)
 
-hook.Add("DT_HUD/Paint", "DT_HUD/Ammo", function()
-  if not DT_HUD.AmmoEnabled:GetBool() then return end
+hook.Add("DT_HUD/Paint", "DT_HUD/Weapon", function()
+  if not DT_HUD.WeaponEnabled:GetBool() then return end
   local ply = LocalPlayer()
   if not ply:Alive() then return end
   if ply:InVehicle() then return end
@@ -31,14 +31,14 @@ hook.Add("DT_HUD/Paint", "DT_HUD/Ammo", function()
       ammo = weap:Clip1()
       clipsize = weap:GetMaxClip1()
       ammoType = weap:GetPrimaryAmmoType()
-      color = DT_HUD.AmmoColor.Value
+      color = DT_HUD.PrimaryAmmoColor.Value
     else
       pieX, pieY, pieR = 10, 8, 2
       textX, textY = 13, 6.5
       ammo = weap:Clip2()
       clipsize = weap:GetMaxClip2()
       ammoType = weap:GetSecondaryAmmoType()
-      color = DT_HUD.Ammo2Color.Value
+      color = DT_HUD.SecondaryAmmoColor.Value
     end
 
     local ammoCount = ply:GetAmmoCount(ammoType)
@@ -74,21 +74,21 @@ hook.Add("DT_HUD/Paint", "DT_HUD/Ammo", function()
     if act == ACT_VM_RELOAD or string.find(name, "reload") then
       local cycle = math.Round(vm:GetCycle(), 2)
       if cycle == 1 then return end
-      local outerRadius = 4
-      local innerRadius = 2
+      local outerRadius = 2.75
+      local innerRadius = 2.25
+      local lines = 100
 
-      if DT_HUD.WeaponReloadCrosshair:GetBool() then
-        ctx:SetOrigin(ctx:GetCenter())
-      else
+      if not DT_HUD.WeaponReloadCrosshair:GetBool() then
         ctx:SetOrigin(-23.5 - outerRadius - 1, -outerRadius - 1)
-        ctx:CreateRing(0, 0, outerRadius, innerRadius, 80)
-          :Fill(DT_HUD.Background)
-          :Blur(DT_HUD.Blur:GetInt())
-          :Stroke(DT_HUD.Border)
-      end
+      else ctx:SetOrigin(ctx:GetCenter()) end
 
-      local ring = ctx:CreateRing(0, 0, 0, innerRadius + 0.75, 100)
-      ring.OuterCircle = ctx:CreateCirclePiece(0, 0, outerRadius - 0.75, 100, nil, math.Round(100 * cycle), 100)
+      ctx:CreateRing(0, 0, outerRadius, innerRadius, lines)
+        :Fill(DT_HUD.Background)
+        :Blur(DT_HUD.Blur:GetInt())
+        :Stroke(DT_HUD.Border)
+
+      local ring = ctx:CreateRing(0, 0, 0, innerRadius, lines)
+      ring.OuterCircle = ctx:CreateCirclePiece(0, 0, outerRadius, lines, nil, math.Round(lines * cycle), lines)
       ring:Fill(DT_HUD.MainColor.Value)
     end
   end

@@ -1,6 +1,6 @@
-DT_HUD.StatusEnabled = DT_Lib.ClientConVar("dt_hud_status", "1")
+DT_HUD.StatusEnabled = DT_Lib.ClientConVar("dt_hud_status_info", "1")
 DT_HUD.StatusEffects = DT_Lib.ClientConVar("dt_hud_status_effects", "1")
-DT_HUD.StatusInfoEnabled = DT_Lib.ClientConVar("dt_hud_status_info", "1")
+DT_HUD.StatusMiscEnabled = DT_Lib.ClientConVar("dt_hud_status_misc", "1")
 
 local FPS = -1
 local PING = -1
@@ -59,7 +59,7 @@ hook.Add("DT_HUD/Paint", "DT_HUD/Status", function()
   rect:Stroke(DT_HUD.Border)
   ctx:DrawText(1, 1, "if u read this ur gay")
 
-  if DT_HUD.StatusInfoEnabled:GetBool() then
+  if DT_HUD.StatusMiscEnabled:GetBool() then
     ctx:SetOrigin(1.5, -16)
     ctx:DrawFrame(22, 3, "left")
 

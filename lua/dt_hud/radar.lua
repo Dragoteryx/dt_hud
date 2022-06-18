@@ -92,12 +92,12 @@ if SERVER then
 
 else
 
-  DT_HUD.RadarEnabled = DT_Lib.ConVar("dt_hud_radar", "1")
-  DT_HUD.RadarScale = DT_Lib.ConVar("dt_hud_radar_scale", "1")
-  DT_HUD.RadarIcons = DT_Lib.ConVar("dt_hud_radar_icons", "1")
-  DT_HUD.RadarLastDeath = DT_Lib.ConVar("dt_hud_radar_last_death", "1")
-  DT_HUD.CompassEnabled = DT_Lib.ConVar("dt_hud_compass", "1")
-  DT_HUD.CompassNorthOnly = DT_Lib.ConVar("dt_hud_compass_north_only", "0")
+  DT_HUD.RadarEnabled = DT_Lib.ClientConVar("dt_hud_radar", "1")
+  DT_HUD.RadarScale = DT_Lib.ClientConVar("dt_hud_radar_scale", "1")
+  DT_HUD.RadarIcons = DT_Lib.ClientConVar("dt_hud_radar_icons", "1")
+  DT_HUD.RadarLastDeath = DT_Lib.ClientConVar("dt_hud_radar_last_death", "1")
+  DT_HUD.CompassEnabled = DT_Lib.ClientConVar("dt_hud_compass", "1")
+  DT_HUD.CompassNorthOnly = DT_Lib.ClientConVar("dt_hud_compass_north_only", "0")
 
   local LAST_DEATH = nil
   net.Receive("DT_HUD/PlayerDeath", function()
@@ -156,7 +156,7 @@ else
     --- @param pos Vector
     --- @return number
     local function CalcAngle(pos)
-      return math.AngleDifference((pos - myPos):Angle().y, myAng.y)
+      return -math.AngleDifference((pos - myPos):Angle().y, myAng.y)
     end
 
     --- @param pos Vector
@@ -166,7 +166,7 @@ else
       local dist = (myPos-pos):Length2D()
       if dist > range and not important then return end
       local coords = Vector(radius*math.min(1, dist/range)*0.9, 0)
-      coords:Rotate(Angle(0, -CalcAngle(pos) - 90, 0))
+      coords:Rotate(Angle(0, CalcAngle(pos) - 90, 0))
       return coords.x, coords.y
     end
 
@@ -223,7 +223,7 @@ else
       end
       if ent:IsWeapon() then
         if IsValid(ent:GetOwner()) then continue end
-        local color = DT_HUD.WeaponColor.Value
+        local color = DT_HUD.WeaponsColor.Value
         if sweep ~= -1 then color.a = (1 - fade)*255 end
         if DT_HUD.RadarIcons:GetBool() then
           local icon = DT_HUD.WeaponIcon
@@ -232,7 +232,7 @@ else
         color.a = 255
       elseif IsVehicle(ent) then
         if not IsVehicleEmpty(ent) then continue end
-        local color = DT_HUD.VehicleColor.Value
+        local color = DT_HUD.VehiclesColor.Value
         if sweep ~= -1 then color.a = (1 - fade)*255 end
         if DT_HUD.RadarIcons:GetBool() then
           local icon = DT_HUD.GetVehicleIcon(ent)
