@@ -66,7 +66,8 @@ hook.Add("DT_HUD/Paint", "DT_HUD/Ammo", function()
   end
 
   local vm = ply:GetViewModel()
-  if DT_HUD.WeaponReload:GetBool() and IsValid(vm) then
+  if IsValid(vm) and DT_HUD.WeaponReload:GetBool()
+  and weap:GetClass() ~= "weapon_physcannon" then
     local seq = vm:GetSequence()
     local act = vm:GetSequenceActivity(seq)
     local name = string.lower(vm:GetSequenceName(seq))
