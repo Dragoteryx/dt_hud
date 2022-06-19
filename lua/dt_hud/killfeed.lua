@@ -74,15 +74,14 @@ else
     for i = 1, math.min(#KILLFEED, DT_HUD.KillfeedMaximum:GetInt()) do
       local death = KILLFEED[i]
       ctx:DrawFrame(22, 3, "right")
-      ctx:CreateSquare(10, 0.5, 2):Fill(DT_HUD.MainColor.Value, DT_HUD.DeathIcon)
+      ctx:CreateSquare(11, 1.5, 2):Fill(DT_HUD.MainColor.Value, DT_HUD.DeathIcon)
       local attackerColor = DT_HUD.GetDispositionColor(death.attacker.Disposition)
       local attackerText = death.attacker.IsPlayer and death.attacker.Name or language.GetPhrase(death.attacker.Name)
       ctx:DrawText(1, 0.85, attackerText, {color = attackerColor, maxLength = 8.5})
       local victimColor = DT_HUD.GetDispositionColor(death.victim.Disposition)
       local victimText = death.victim.IsPlayer and death.victim.Name or language.GetPhrase(death.victim.Name)
       ctx:DrawText(21, 0.85, victimText, {color = victimColor, maxLength = 8.5, xAlign = TEXT_ALIGN_RIGHT})
-      local x, y = ctx:GetOrigin()
-      ctx:SetOrigin(x, y + 4)
+      ctx:AddOffset(0, 4)
     end
   end)
 

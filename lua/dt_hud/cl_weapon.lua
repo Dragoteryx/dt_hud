@@ -79,7 +79,7 @@ hook.Add("DT_HUD/Paint", "DT_HUD/Weapon", function()
       local lines = 100
 
       if not DT_HUD.WeaponReloadCrosshair:GetBool() then
-        ctx:SetOrigin(-23.5 - outerRadius - 1, -outerRadius - 1)
+        ctx:SetOrigin(-24.5 - outerRadius, -outerRadius - 1)
       else ctx:SetOrigin(ctx:GetCenter()) end
 
       ctx:CreateRing(0, 0, outerRadius, innerRadius, lines)

@@ -85,18 +85,18 @@ end
 function DT_HUD.DRAW_CONTEXT:DrawPie(x, y, options)
   local radius, color = options.radius, options.color
   local value, max = options.value, options.max
-  if max == 1 then
-    local hex = self:CreateHexagon(x, y, radius)
+  if max <= 1 then
+    local poly = self:CreateDiamond(x, y, radius)
     if value <= 0 then
-      hex:Fill(DT_HUD.Background)
-      if options.blur then hex:Blur(DT_HUD.Blur:GetInt()) end
-      hex:Stroke(DT_HUD.Border)
-    else hex:Fill(color) end
-  elseif max < 4 then
+      poly:Fill(DT_HUD.Background)
+      if options.blur then poly:Blur(DT_HUD.Blur:GetInt()) end
+      poly:Stroke(DT_HUD.Border)
+    else poly:Fill(color) end
+  elseif max <= 3 then
     options.value = value*2
     options.max = max*2
     self:DrawPie(x, y, options)
-  elseif max >= 4 then
+  else
     local circle = self:CreateCircle(x, y, radius, max)
     circle:Fill(DT_HUD.Background)
     if options.blur then circle:Blur(DT_HUD.Blur:GetInt()) end

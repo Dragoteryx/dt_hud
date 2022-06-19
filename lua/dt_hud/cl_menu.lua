@@ -12,6 +12,9 @@ hook.Add("PopulateToolMenu", "DT_HUD/ToolMenu", function()
     local function GetText(placeholder) return language.GetPhrase("dt_hud.menu.client."..placeholder) end
 
     panel:CheckBox(GetText("enabled"), DT_HUD.Enabled:GetName())
+    panel:CheckBox(GetText("hide_zoom"), DT_HUD.HideZoom:GetName())
+    panel:NumSlider(GetText("scale"), DT_HUD.Scale:GetName(), 0.5, 1.5, 1)
+    panel:NumSlider(GetText("blur"), DT_HUD.Blur:GetName(), 0, 3, 0)
 
     panel:ControlHelp("\n"..GetText("status"))
     panel:CheckBox(GetText("status.enabled"), DT_HUD.StatusEnabled:GetName())

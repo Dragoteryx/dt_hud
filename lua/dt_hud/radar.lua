@@ -72,7 +72,7 @@ if SERVER then
         local entData = {}
         entData.Entity = ent
         entData.InPVS = ply:TestPVS(ent)
-        entData.Pos = ent:WorldSpaceCenter()
+        entData.Pos = ent:GetPos()
         entData.Vel = ent:DT_GetVelocity()
         entData.Disp = ent:DT_GetDisposition(ply)
         table.insert(data, entData)
@@ -109,8 +109,7 @@ else
 
   local RADAR_DATA = {}
   net.Receive("DT_HUD/RadarData", function()
-    local entities = net.ReadUInt(32)
-    for _ = 1, entities do
+    for _ = 1, net.ReadUInt(32) do
       local ent = net.ReadEntity()
       RADAR_DATA[ent:EntIndex()] = {
         Entity = ent,
@@ -250,7 +249,7 @@ else
     -- draw last death
     if LAST_DEATH and DT_HUD.RadarLastDeath:GetBool() then
       local x, y = ToRadarCoords(LAST_DEATH, true)
-      local icon = ctx:CreateSquare(x - 0.75, y - 0.75, 1.5)
+      local icon = ctx:CreateSquare(x, y, 1.5)
       icon:Fill(DT_HUD.MainColor.Value, DT_HUD.DeathIcon)
     end
 

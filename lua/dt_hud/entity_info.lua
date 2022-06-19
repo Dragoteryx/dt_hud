@@ -29,12 +29,21 @@ else
 
   DT_HUD.EntityInfo = {}
   net.Receive("DT_HUD/EntityInfo", function()
-    DT_HUD.EntityInfo = {
-      Entity = net.ReadEntity(),
-      Health = net.ReadFloat(),
-      MaxHealth = net.ReadFloat(),
-      Disposition = net.ReadUInt(3)
-    }
+    local oldEnt = DT_HUD.EntityInfo.Entity
+    DT_HUD.EntityInfo.Entity = net.ReadEntity()
+    DT_HUD.EntityInfo.Health = net.ReadFloat()
+    DT_HUD.EntityInfo.MaxHealth = net.ReadFloat()
+    DT_HUD.EntityInfo.Disposition = net.ReadUInt(3)
+    if oldEnt ~= DT_HUD.EntityInfo.Entity then
+      DT_HUD.EntityInfo.DisplayedHealth = nil
+    end
+  end)
+  hook.Add("Think", "DT_HUD/EntityHealthLerp", function()
+    if LocalPlayer():GetEyeTrace().Entity == DT_HUD.EntityInfo.Entity then
+      DT_HUD.EntityInfo.DisplayedHealth = DT_HUD.EntityInfo.DisplayedHealth
+        and Lerp(0.2, DT_HUD.EntityInfo.DisplayedHealth, DT_HUD.EntityInfo.Health)
+        or DT_HUD.EntityInfo.Health
+    else DT_HUD.EntityInfo = {} end
   end)
 
   local function DisplayEntityInfo()
@@ -53,8 +62,8 @@ else
     if ply:InVehicle() then return end
     local ent = ply:GetEyeTrace().Entity
     if ent == DT_HUD.EntityInfo.Entity and DisplayEntityInfo() then
-      local health = DT_HUD.EntityInfo.Health
       local maxHealth = DT_HUD.EntityInfo.MaxHealth
+      local health = DT_HUD.EntityInfo.DisplayedHealth or DT_HUD.EntityInfo.Health
       local text = ent:IsPlayer() and ent:Nick() or language.GetPhrase(ent:GetClass())
       local color = DT_HUD.GetDispositionColor(DT_HUD.EntityInfo.Disposition)
       local ctx = DT_HUD.DrawContext()
@@ -63,14 +72,14 @@ else
         local top = Vector(pos.x, pos.y, pos.z + height)
         local x, y = ctx:FromWorldPos(top)
         if not x or not y then return end
-        ctx:SetOrigin(x - 10, y - 4)
-        ctx:SetWrapAround(false)
+        ctx:SetOffset(x - 10, y - 4)
         ctx:DrawText(10, -2, text, {maxLength = 20, xAlign = TEXT_ALIGN_CENTER})
         ctx:DrawBar(0, 0, {
           length = 20, height = 2,
           label = "#dt_hud.health",
           value = health, max = maxHealth,
-          color = color, blur = true
+          color = color, blur = true,
+          animId = "entity_info"
         })
       else
         ctx:SetOrigin(1.5, 1)
@@ -80,7 +89,8 @@ else
           length = 20, height = 2,
           label = "#dt_hud.health",
           value = health, max = maxHealth,
-          color = color
+          color = color, blur = false,
+          animId = "entity_info"
         })
       end
     end
