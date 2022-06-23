@@ -61,6 +61,10 @@ else
     end)
   end)
 
+  concommand.Add("dt_hud_cmd_clear_killfeed", function()
+    KILLFEED = {}
+  end)
+
   hook.Add("DrawDeathNotice", "DT_HUD/HideKillfeed", function()
     if DT_HUD.Enabled:GetBool() and DT_HUD.KillfeedEnabled:GetBool() then
       return false
@@ -77,8 +81,8 @@ else
 
     for i = 1, math.min(#KILLFEED, DT_HUD.KillfeedMaximum:GetInt()) do
       local entry = KILLFEED[i]
-      local enterOffset = 24 - math.min(1, (CurTime() - entry.time) * 5) * 24
-      local leaveOffset = 24 - math.min(1, (entry.duration - (CurTime() - entry.time)) * 5) * 24
+      local enterOffset = 24 - 24 * math.min(1, (CurTime() - entry.time) * 5)
+      local leaveOffset = 24 - 24 * math.min(1, (entry.duration - (CurTime() - entry.time)) * 5)
       local offset = math.max(enterOffset, leaveOffset)
       ctx:AddOffset(offset, 0)
       ctx:DrawFrame(22, 3, "right")

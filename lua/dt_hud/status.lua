@@ -12,7 +12,7 @@ if SERVER then
 else
 
   DT_HUD.StatusEnabled = DT_Lib.ClientConVar("dt_hud_status_info", "1")
-  DT_HUD.StatusEffects = DT_Lib.ClientConVar("dt_hud_status_effects", "1")
+  DT_HUD.StatusEffectsEnabled = DT_Lib.ClientConVar("dt_hud_status_effects", "1")
   DT_HUD.StatusMiscEnabled = DT_Lib.ClientConVar("dt_hud_status_misc", "1")
 
   local FPS = -1
@@ -39,12 +39,12 @@ else
   end)
 
   local DMG_TYPES = {
-    {dmgtype = DMG_SLASH, last = -1, mat = Material("dt_hud/slash.png")},
-    {dmgtype = DMG_BLAST + DMG_BLAST_SURFACE, last = -1, mat = Material("dt_hud/blast.png")},
-    {dmgtype = DMG_BURN + DMG_SLOWBURN, last = -1, mat = Material("dt_hud/fire.png")},
-    {dmgtype = DMG_SHOCK, last = -1, mat = Material("dt_hud/shock.png")},
-    {dmgtype = DMG_ACID + DMG_POISON + DMG_PARALYZE, last = -1, mat = Material("dt_hud/poison.png")},
-    {dmgtype = DMG_RADIATION, last = -1, mat = Material("dt_hud/radiation.png")}
+    {dmgtype = DMG_SLASH, last = -1, mat = Material("dt_hud/status/slash.png")},
+    {dmgtype = DMG_BLAST + DMG_BLAST_SURFACE, last = -1, mat = Material("dt_hud/status/blast.png")},
+    {dmgtype = DMG_BURN + DMG_SLOWBURN, last = -1, mat = Material("dt_hud/status/fire.png")},
+    {dmgtype = DMG_SHOCK, last = -1, mat = Material("dt_hud/status/shock.png")},
+    {dmgtype = DMG_ACID + DMG_POISON + DMG_PARALYZE, last = -1, mat = Material("dt_hud/status/poison.png")},
+    {dmgtype = DMG_RADIATION, last = -1, mat = Material("dt_hud/status/radiation.png")}
   }
 
   net.Receive("DT_HUD/PlayerTakeDamage", function()
@@ -69,7 +69,7 @@ else
     if not ply:Alive() then return end
 
     local ctx = DT_HUD.DrawContext()
-    if DT_HUD.StatusEffects:GetBool() then
+    if DT_HUD.StatusEffectsEnabled:GetBool() then
       ctx:SetOrigin(1.5, -12)
       ctx:DrawFrame(22, 11, "left")
     else
@@ -82,17 +82,13 @@ else
     local health = HEALTH or ply:Health()
     local maxHealth = ply:GetMaxHealth()
     local healthRatio = math.Clamp(health/maxHealth, 0, 1)
-    local fullHealth = DT_HUD.FullHealthColor.Value
-    local lowHealth = DT_HUD.LowHealthColor.Value
+    local fullHealth = DT_HUD.FullHealthColor.Value:ToVector()
+    local lowHealth = DT_HUD.LowHealthColor.Value:ToVector()
     ctx:DrawBar(1, 1, {
       length = 20, height = 2,
       label = "#dt_hud.health",
       value = health, max = maxHealth,
-      color = Color(
-        Lerp(healthRatio, lowHealth.r, fullHealth.r),
-        Lerp(healthRatio, lowHealth.g, fullHealth.g),
-        Lerp(healthRatio, lowHealth.b, fullHealth.b)
-      )
+      color = LerpVector(healthRatio, lowHealth, fullHealth):ToColor()
     })
 
     local armor = ARMOR or ply:Armor()
@@ -128,20 +124,20 @@ else
         speed:Fill(DT_HUD.MainColor.Value, DT_HUD.SpeedIcon)
       end
 
-      ctx:DrawText(8, 1, text, {xAlign = TEXT_ALIGN_RIGHT})
+      ctx:DrawText(8, 1.5, text, {xAlign = TEXT_ALIGN_RIGHT, yAlign = TEXT_ALIGN_CENTER})
       ctx:DrawLine(9, 0, 9, 3, DT_HUD.Border)
 
       ctx:CreateSquare(10.65, 1.55, 1.8):Fill(DT_HUD.MainColor.Value, DT_HUD.FPSIcon)
-      ctx:DrawText(14.5, 1, FPS, {xAlign = TEXT_ALIGN_RIGHT})
+      ctx:DrawText(14.5, 1.5, FPS, {xAlign = TEXT_ALIGN_RIGHT, yAlign = TEXT_ALIGN_CENTER})
       ctx:DrawLine(15.5, 0, 15.5, 3, DT_HUD.Border)
 
       ctx:CreateSquare(17.15, 1.55, 2.3):Fill(DT_HUD.MainColor.Value, DT_HUD.PingIcon)
-      ctx:DrawText(21, 1, PING, {xAlign = TEXT_ALIGN_RIGHT})
+      ctx:DrawText(21, 1.5, PING, {xAlign = TEXT_ALIGN_RIGHT, yAlign = TEXT_ALIGN_CENTER})
     end
 
     -- status effects --
 
-    if DT_HUD.StatusEffects:GetBool() then
+    if DT_HUD.StatusEffectsEnabled:GetBool() then
       ctx:SetOrigin(2.5, -5)
       ctx:CreateRectangle(0, 0, 20, 3)
         :Fill(DT_HUD.Background)

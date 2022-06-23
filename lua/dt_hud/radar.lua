@@ -16,7 +16,7 @@ end
 --- This sould be synchronized between the server
 --- and the client as long as [CurTime](https://wiki.facepunch.com/gmod/Global.CurTime) is synchronized.
 --- @return number sweep @The current sweep value.
-function DT_HUD.GetSweep()
+function DT_HUD.GetRadarSweep()
   local sweep = DT_HUD.RadarSweep:GetFloat()
   if sweep < 0 then return -1 end
   return CurTime() % (sweep + 1)
@@ -33,8 +33,8 @@ if SERVER then
   end)
 
   local function ShowOnRadar(ent)
-    return ent:DT_IsTarget() or IsVehicle(ent)
-      or (ent:IsWeapon() and not IsValid(ent:GetOwner()))
+    if not IsValid(ent) then return false end
+    return ent:DT_IsTarget() or IsVehicle(ent) or (ent:IsWeapon() and not IsValid(ent:GetOwner()))
   end
 
   local LAST_UPDATE = 0
@@ -45,17 +45,18 @@ if SERVER then
     local delay = 1 / DT_HUD.RadarTickrate:GetFloat()
     if CurTime() < LAST_UPDATE + delay then return end
     LAST_UPDATE = CurTime()
-    local sweep = DT_HUD.GetSweep()
+
+    local sweep = DT_HUD.GetRadarSweep()
     if sweep < LAST_SWEEP then SENT_ENTITIES = {} end
     LAST_SWEEP = sweep
+
     local range = DT_HUD.RadarRange:GetFloat()
     local sweepDist = (sweep/0.9)*range
     local entities = {}
     for _, ent in ipairs(ents.GetAll()) do
-      if IsValid(ent) and ShowOnRadar(ent) then
-        table.insert(entities, ent)
-      end
+      if ShowOnRadar(ent) then table.insert(entities, ent) end
     end
+
     for _, ply in ipairs(player.GetHumans()) do
       local myPos = ply:GetPos()
       local data = {}
@@ -69,24 +70,27 @@ if SERVER then
           if dist > sweepDist then continue end
           SENT_ENTITIES[ent] = true
         end
-        local entData = {}
-        entData.Entity = ent
-        entData.InPVS = ply:TestPVS(ent)
-        entData.Pos = ent:GetPos()
-        entData.Vel = ent:DT_GetVelocity()
-        entData.Disp = ent:DT_GetDisposition(ply)
-        table.insert(data, entData)
+        table.insert(data, {
+          Entity = ent,
+          InPVS = ply:TestPVS(ent),
+          Pos = ent:WorldSpaceCenter(),
+          Vel = ent:DT_GetVelocity(),
+          Disp = ent:DT_GetDisposition(ply)
+        })
       end
-      net.Start("DT_HUD/RadarData")
-      net.WriteUInt(#data, 32)
-      for _, entData in ipairs(data) do
-        net.WriteEntity(entData.Entity)
-        net.WriteBool(entData.InPVS)
-        net.WriteVector(entData.Pos)
-        net.WriteVector(entData.Vel)
-        net.WriteUInt(entData.Disp, 3)
+
+      if #data > 0 then
+        net.Start("DT_HUD/RadarData")
+        net.WriteUInt(#data, 16)
+        for _, entData in ipairs(data) do
+          net.WriteEntity(entData.Entity)
+          net.WriteBool(entData.InPVS)
+          net.WriteVector(entData.Pos)
+          net.WriteVector(entData.Vel)
+          net.WriteUInt(entData.Disp, 3)
+        end
+        net.Send(ply)
       end
-      net.Send(ply)
     end
   end)
 
@@ -109,7 +113,7 @@ else
 
   local RADAR_DATA = {}
   net.Receive("DT_HUD/RadarData", function()
-    for _ = 1, net.ReadUInt(32) do
+    for _ = 1, net.ReadUInt(16) do
       local ent = net.ReadEntity()
       RADAR_DATA[ent:EntIndex()] = {
         Entity = ent,
@@ -150,7 +154,10 @@ else
     local radius = 15*DT_HUD.RadarScale:GetFloat()
     local range = DT_HUD.RadarRange:GetFloat()
     local myPos, myAng = ply:GetPos(), EyeAngles()
-    local sweep = DT_HUD.GetSweep()
+    local sweep = DT_HUD.GetRadarSweep()
+
+    local ctx = DT_HUD.DrawContext()
+    ctx:SetOrigin(-radius - 1, radius + 1)
 
     --- @param pos Vector
     --- @return number
@@ -168,9 +175,6 @@ else
       coords:Rotate(Angle(0, CalcAngle(pos) - 90, 0))
       return coords.x, coords.y
     end
-
-    local ctx = DT_HUD.DrawContext()
-    ctx:SetOrigin(-radius - 1, radius + 1)
 
     -- draw radar
 

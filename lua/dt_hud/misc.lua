@@ -41,15 +41,22 @@ if CLIENT then
 
   -- Materials --
 
-  DT_HUD.DeathIcon = Material("dt_hud/death.png")
-  DT_HUD.SpeedIcon = Material("dt_hud/speed.png")
-  DT_HUD.FPSIcon = Material("dt_hud/fps.png")
-  DT_HUD.PingIcon = Material("dt_hud/ping.png")
-  DT_HUD.WeaponIcon = Material("dt_hud/weapon.png")
-  DT_HUD.CarIcon = Material("dt_hud/car.png")
-  DT_HUD.TankIcon = Material("dt_hud/tank.png")
-  DT_HUD.PlaneIcon = Material("dt_hud/plane.png")
-  DT_HUD.HelicopterIcon = Material("dt_hud/helicopter.png")
+  DT_HUD.SpeedIcon = Material("dt_hud/info/speed.png")
+  DT_HUD.FPSIcon = Material("dt_hud/info/fps.png")
+  DT_HUD.PingIcon = Material("dt_hud/info/ping.png")
+
+  DT_HUD.DeathIcon = Material("dt_hud/radar/death.png")
+  DT_HUD.WeaponIcon = Material("dt_hud/radar/weapon.png")
+  DT_HUD.CarIcon = Material("dt_hud/radar/car.png")
+  DT_HUD.TankIcon = Material("dt_hud/radar/tank.png")
+  DT_HUD.PlaneIcon = Material("dt_hud/radar/plane.png")
+  DT_HUD.HelicopterIcon = Material("dt_hud/radar/helicopter.png")
+
+  DT_HUD.NotifyGeneric = Material("dt_hud/notify/generic.png")
+  DT_HUD.NotifyError = Material("dt_hud/notify/error.png")
+  DT_HUD.NotifyUndo	= Material("dt_hud/notify/undo.png")
+  DT_HUD.NotifyHint = Material("dt_hud/notify/hint.png")
+  DT_HUD.NotifyCleanup = Material("dt_hud/notify/cleanup.png")
 
   function DT_HUD.GetVehicleIcon(veh)
     if veh.LFS then

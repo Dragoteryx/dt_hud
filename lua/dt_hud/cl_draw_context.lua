@@ -55,7 +55,6 @@ function DT_HUD.DRAW_CONTEXT:DrawBar(x, y, options)
   if options.label then
     local value = math.Round(value)
     local max = math.Round(max)
-    local offset = (height/2)-0.65
     DT_Lib.ResetStencil()
     render.SetStencilEnable(true)
       render.SetStencilCompareFunction(STENCIL_NEVER)
@@ -63,11 +62,23 @@ function DT_HUD.DRAW_CONTEXT:DrawBar(x, y, options)
       self:CreateRectangle(x, y, barLength, height):Fill(options.color)
       render.SetStencilCompareFunction(STENCIL_EQUAL)
       render.SetStencilFailOperation(STENCIL_KEEP)
-      self:DrawText(x + 0.5, y + offset, options.label)
-      self:DrawText(x + length - 0.5, y + offset, value.." / "..max, {xAlign = TEXT_ALIGN_RIGHT})
+      self:DrawText(x + 0.5, y + height/2, options.label, {
+        yAlign = TEXT_ALIGN_CENTER
+      })
+      self:DrawText(x + length - 0.5, y + height/2, value.." / "..max, {
+        xAlign = TEXT_ALIGN_RIGHT,
+        yAlign = TEXT_ALIGN_CENTER
+      })
       render.SetStencilReferenceValue(1)
-      self:DrawText(x + 0.5, y + offset, options.label, {outlineColor = DT_HUD.Background})
-      self:DrawText(x + length - 0.5, y + offset, value.." / "..max, {xAlign = TEXT_ALIGN_RIGHT, outlineColor = DT_HUD.Background})
+      self:DrawText(x + 0.5, y + height/2, options.label, {
+        yAlign = TEXT_ALIGN_CENTER,
+        outlineColor = DT_HUD.Background
+      })
+      self:DrawText(x + length - 0.5, y + height/2, value.." / "..max, {
+        xAlign = TEXT_ALIGN_RIGHT,
+        yAlign = TEXT_ALIGN_CENTER,
+        outlineColor = DT_HUD.Background
+      })
     render.SetStencilEnable(false)
   end
 end
