@@ -25,10 +25,12 @@ if SERVER then
   end
 
   hook.Add("PlayerDeath", "DT_HUD/SendPlayerDeathToKillfeed", function(ply, _, attacker)
+    if not IsValid(attacker) then attacker = ply end
     SendToKillfeed(attacker, ply)
   end)
 
   hook.Add("OnNPCKilled", "DT_HUD/SendNPCDeathToKillfeed", function(npc, attacker)
+    if not IsValid(attacker) then attacker = ent end
     SendToKillfeed(attacker, npc)
   end)
 
