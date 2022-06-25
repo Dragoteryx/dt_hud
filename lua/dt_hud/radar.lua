@@ -242,6 +242,14 @@ else
           ctx:CreateSquare(x, y, 1.5):Fill(color, icon)
         else DrawOnRadar(color) end
         color.a = 255
+      elseif ent:GetClass() == "neo_replicator_melon" then
+        local color = DT_HUD.GetDispositionColor(data.Disp)
+        if sweep ~= -1 then color.a = (1 - fade)*255 end
+        if DT_HUD.RadarIcons:GetBool() then
+          local icon = DT_HUD.MelonIcon
+          ctx:CreateSquare(x, y, 1.25):Fill(color, icon)
+        else DrawOnRadar(color) end
+        color.a = 255
       else
         local color = DT_HUD.GetDispositionColor(data.Disp)
         if sweep ~= -1 then color.a = (1 - fade)*255 end

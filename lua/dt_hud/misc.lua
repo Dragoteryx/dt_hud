@@ -51,6 +51,7 @@ if CLIENT then
   DT_HUD.TankIcon = Material("dt_hud/radar/tank.png")
   DT_HUD.PlaneIcon = Material("dt_hud/radar/plane.png")
   DT_HUD.HelicopterIcon = Material("dt_hud/radar/helicopter.png")
+  DT_HUD.MelonIcon = Material("dt_hud/radar/melon.png")
 
   DT_HUD.NotifyGeneric = Material("dt_hud/notify/generic.png")
   DT_HUD.NotifyError = Material("dt_hud/notify/error.png")
