@@ -10,17 +10,17 @@ DT_Hud.MeasuringSystem = DT_Core.ClientConVar("dt_hud_measuring_system", "hammer
 
 -- Draw hooks --
 
-hook.Add("HUDShouldDraw", "DT/HUD_ShouldDraw", function(name)
+hook.Add("HUDShouldDraw", "DT/Hud.ShouldDraw", function(name)
 	if not DRAW_HUD:GetBool() or not DT_Hud.Enabled:GetBool() then return end
 	if name == "CHudZoom" and DT_Hud.HideZoom:GetBool() then return false end
 	if name == "CHudPoisonDamageIndicator" and DT_Hud.HidePoison:GetBool() then return false end
 	if name == "CHudCrosshair" and DT_Hud.HideCrosshair:GetBool() then return false end
-	return hook.Run("DT/HUD_ShouldDraw", name)
+	return hook.Run("DT/Hud.ShouldDraw", name)
 end)
 
-hook.Add("HUDPaint", "DT/HUD_Paint", function()
+hook.Add("HUDPaint", "DT/Hud.Paint", function()
 	if not DRAW_HUD:GetBool() or not DT_Hud.Enabled:GetBool() then return end
-	return hook.Run("DT/HUD_Draw")
+	return hook.Run("DT/Hud.Draw")
 end)
 
 -- Materials --a
@@ -118,11 +118,11 @@ local function CreateFont(name, size)
 end
 
 local function CreateFonts()
-	CreateFont("DT/HUD_Default", 15)
-	CreateFont("DT/HUD_Large", 20)
-	CreateFont("DT/HUD_Huge", 30)
+	CreateFont("DT/Hud.Default", 15)
+	CreateFont("DT/Hud.Large", 20)
+	CreateFont("DT/Hud.Huge", 30)
 end
 
 CreateFonts()
-hook.Add("OnScreenSizeChanged", "DT/HUD_CreateFonts", CreateFonts)
+hook.Add("OnScreenSizeChanged", "DT/Hud.CreateFonts", CreateFonts)
 cvars.AddChangeCallback(DT_Hud.Scale:GetName(), CreateFonts)

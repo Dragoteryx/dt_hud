@@ -3,17 +3,17 @@ DT_Hud.CompassMaxRange = DT_Core.ConVar("dt_hud_compass_max_range", "1500")
 DT_Hud.CompassTickrate = DT_Core.ConVar("dt_hud_compass_tickrate", "10")
 
 if SERVER then
-	util.AddNetworkString("DT/HUD_PlayerDeath")
-	util.AddNetworkString("DT/HUD_UpdateCompass")
+	util.AddNetworkString("DT/Hud.PlayerDeath")
+	util.AddNetworkString("DT/Hud.UpdateCompass")
 
-	hook.Add("PostPlayerDeath", "DT/HUD_PlayerDeath", function(ply)
-		net.Start("DT/HUD_PlayerDeath")
+	hook.Add("PostPlayerDeath", "DT/Hud.PlayerDeath", function(ply)
+		net.Start("DT/Hud.PlayerDeath")
 		net.WriteVector(ply:GetPos())
 		net.Send(ply)
 	end)
 
 	local LAST_UPDATE = 0
-	hook.Add("Think", "DT/HUD_UpdateCompass", function()
+	hook.Add("Think", "DT/Hud.UpdateCompass", function()
 		local delay = 1 / DT_Hud.CompassTickrate:GetFloat()
 		if CurTime() < LAST_UPDATE + delay then return end
 		LAST_UPDATE = CurTime()
@@ -37,7 +37,7 @@ if SERVER then
 				end
 			end
 
-			net.Start("DT/HUD_UpdateCompass")
+			net.Start("DT/Hud.UpdateCompass")
 			net.WriteUInt(#data, 16)
 			for _, entData in ipairs(data) do
 				net.WriteEntity(entData.ent)
@@ -55,15 +55,15 @@ else
 	DT_Hud.CompassLastDeath = DT_Core.ClientConVar("dt_hud_compass_last_death", "1")
 
 	local LAST_DEATH = nil
-	net.Receive("DT/HUD_PlayerDeath", function()
+	net.Receive("DT/Hud.PlayerDeath", function()
 		LAST_DEATH = net.ReadVector()
 	end)
-	hook.Add("PostCleanupMap", "DT/HUD_CleanupLastDeath", function()
+	hook.Add("PostCleanupMap", "DT/Hud.CleanupLastDeath", function()
 		LAST_DEATH = nil
 	end)
 
 	local COMPASS_DATA = {}
-	net.Receive("DT/HUD_UpdateCompass", function()
+	net.Receive("DT/Hud.UpdateCompass", function()
 		COMPASS_DATA = {}
 		local n = net.ReadUInt(16)
 		for _ = 1, n do
@@ -93,12 +93,12 @@ else
 		{ text = "#dt_hud.compass.west", bearing = 270 }
 	}
 
-	hook.Add("DT/HUD_Draw", "DT/HUD_DrawCompass", function()
+	hook.Add("DT/Hud.Draw", "DT/Hud.DrawCompass", function()
 		if not DT_Hud.CompassEnabled:GetBool() then return end
 		local ctx = DT_Hud.DrawContext()
 		local centerX = ctx:GetCenter()
 		ctx:SetOrigin(centerX - 22, 1)
-		ctx:HUD_DrawBackground(0, 0, 44, 3)
+		ctx:Hud_DrawBackground(0, 0, 44, 3)
 		ctx:MoveOrigin(22, 1.5)
 
 		local north = DT_Hud.CompassRotateNorth:GetFloat()
@@ -173,7 +173,7 @@ else
 				ctx:DrawText(x, 0, dir.text, {
 					xAlign = TEXT_ALIGN_CENTER,
 					yAlign = TEXT_ALIGN_CENTER,
-					font = "DT/HUD_Large",
+					font = "DT/Hud.Large",
 					outline = true
 				})
 			end

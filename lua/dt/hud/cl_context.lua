@@ -3,17 +3,17 @@ function DT_Hud.DrawContext(width, height)
 	ctx:SetDefaultColor(DT_Hud.MainColor:GetValue())
 	ctx:SetDefaultOutlineColor(Color(0, 0, 0, 75))
 	ctx:SetScale(DT_Hud.Scale:GetFloat())
-	ctx:SetDefaultFont("DT/HUD_Default")
+	ctx:SetDefaultFont("DT/Hud.Default")
 	return ctx
 end
 
-function DT_Core.DrawContext.__index:HUD_DrawBackground(x, y, length, height)
+function DT_Core.DrawContext.__index:Hud_DrawBackground(x, y, length, height)
 	self:CreateRectangle(x, y, length, height)
 		:Blur(DT_Hud.BlurQuality:GetInt())
 		:Fill(DT_Hud.BackgroundColor:GetValue())
 end
 
-function DT_Core.DrawContext.__index:HUD_DrawBar(x, y, options)
+function DT_Core.DrawContext.__index:Hud_DrawBar(x, y, options)
 	local value, max = options.value, options.max
 	local length, height = options.length, options.height
 

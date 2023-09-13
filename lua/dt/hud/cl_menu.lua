@@ -1,8 +1,8 @@
-hook.Add("AddToolMenuCategories", "DT/HUD_ToolMenu", function()
-	spawnmenu.AddToolCategory("Utilities", "dt_hud", "DT HUD")
+hook.Add("AddToolMenuCategories", "DT/Hud.ToolMenu", function()
+	spawnmenu.AddToolCategory("Utilities", "dt_hud", "DT Hud")
 end)
 
-hook.Add("PopulateToolMenu", "DT/HUD_ToolMenu", function()
+hook.Add("PopulateToolMenu", "DT/Hud.ToolMenu", function()
 	spawnmenu.AddToolMenuOption("Utilities", "dt_hud", "server", "#dt_hud.menu.server", "", "", function(panel)
 		local function GetText(placeholder) return language.GetPhrase("dt_hud.menu.server." .. placeholder) end
 

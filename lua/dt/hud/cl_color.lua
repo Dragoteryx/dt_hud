@@ -1,4 +1,4 @@
-DT_Hud.Color = DT_Core.CreateStruct()
+DT_Hud.Color = DT_Core.Struct()
 
 function DT_Hud.Color:__new(name, color)
 	self.Name = name

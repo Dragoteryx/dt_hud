@@ -82,7 +82,7 @@ function notification.Kill(id)
 	end
 end
 
-hook.Add("HUDAmmoPickedUp", "DT/HUD_AmmoPickedUp", function(ammo, amount)
+hook.Add("HUDAmmoPickedUp", "DT/Hud.AmmoPickedUp", function(ammo, amount)
 	if not DT_Hud.Enabled:GetBool() or not DT_Hud.Notifications:GetBool() then return end
 	local template = language.GetPhrase("dt_hud.pickup.ammo")
 	local name = language.GetPhrase("#" .. ammo .. "_ammo")
@@ -93,7 +93,7 @@ hook.Add("HUDAmmoPickedUp", "DT/HUD_AmmoPickedUp", function(ammo, amount)
 	return false
 end)
 
-hook.Add("HUDItemPickedUp", "DT/HUD_ItemPickedUp", function(item)
+hook.Add("HUDItemPickedUp", "DT/Hud.ItemPickedUp", function(item)
 	if not DT_Hud.Enabled:GetBool() or not DT_Hud.Notifications:GetBool() then return end
 	local template = language.GetPhrase("dt_hud.pickup.item")
 	local name = language.GetPhrase(item)
@@ -102,7 +102,7 @@ hook.Add("HUDItemPickedUp", "DT/HUD_ItemPickedUp", function(item)
 	return false
 end)
 
-hook.Add("HUDWeaponPickedUp", "DT/HUD_WeaponPickedUp", function(weap)
+hook.Add("HUDWeaponPickedUp", "DT/Hud.WeaponPickedUp", function(weap)
 	if not DT_Hud.Enabled:GetBool() or not DT_Hud.Notifications:GetBool() then return end
 	local template = language.GetPhrase("dt_hud.pickup.weapon")
 	local name = weap:DT_GetNiceName()
@@ -126,7 +126,7 @@ function DT_Hud.DrawLeftNotifications(y)
 			local leaveOffset = offsetLength - offsetLength * math.min(1, (notif.duration - (CurTime() - notif.time)) * 120 / offsetLength)
 			local offset = -math.max(enterOffset, leaveOffset)
 			ctx:MoveOrigin(offset, 0)
-			ctx:HUD_DrawBackground(0, 0, length, 3)
+			ctx:Hud_DrawBackground(0, 0, length, 3)
 			ctx:DrawMaterial(1.5, 1.5, 2, notif.icon, true)
 			ctx:DrawText(3.5, 1.5, notif.text, {yAlign = TEXT_ALIGN_CENTER, outline = true})
 			ctx:MoveOrigin(-offset, -3.5)
@@ -146,7 +146,7 @@ function DT_Hud.DrawRightNotifications(y)
 		local leaveOffset = offsetLength - offsetLength * math.min(1, (notif.duration - (CurTime() - notif.time)) * 120 / offsetLength)
 		local offset = -length + math.max(enterOffset, leaveOffset)
 		ctx:MoveOrigin(offset, 0)
-		ctx:HUD_DrawBackground(0, 0, length, 3)
+		ctx:Hud_DrawBackground(0, 0, length, 3)
 		ctx:DrawMaterial(1.5, 1.5, 2, notif.icon, true)
 		ctx:DrawText(3.5, 1.5, notif.text, {yAlign = TEXT_ALIGN_CENTER, outline = true})
 		ctx:MoveOrigin(-offset, -3.5)

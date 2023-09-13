@@ -1,9 +1,9 @@
 if SERVER then
-	util.AddNetworkString("DT/HUD_EntityDeath")
+	util.AddNetworkString("DT/Hud.EntityDeath")
 
 	local function SendToKillfeed(attacker, victim)
 		for _, ply in pairs(player.GetHumans()) do
-			net.Start("DT/HUD_EntityDeath")
+			net.Start("DT/Hud.EntityDeath")
 			if attacker:IsPlayer() then
 				net.WriteString(attacker:Nick())
 				net.WriteBool(true)
@@ -24,12 +24,12 @@ if SERVER then
 		end
 	end
 
-	hook.Add("PlayerDeath", "DT/HUD_SendPlayerDeathToKillfeed", function(ply, _, attacker)
+	hook.Add("PlayerDeath", "DT/Hud.SendPlayerDeathToKillfeed", function(ply, _, attacker)
 		if not IsValid(attacker) then attacker = ply end
 		SendToKillfeed(attacker, ply)
 	end)
 
-	hook.Add("OnNPCKilled", "DT/HUD_SendNPCDeathToKillfeed", function(npc, attacker)
+	hook.Add("OnNPCKilled", "DT/Hud.SendNPCDeathToKillfeed", function(npc, attacker)
 		if not IsValid(attacker) then attacker = npc end
 		SendToKillfeed(attacker, npc)
 	end)
@@ -41,7 +41,7 @@ else
 	DT_Hud.KillfeedDuration = DT_Core.ClientConVar("dt_hud_killfeed_duration", "10")
 
 	local KILLFEED = {}
-	net.Receive("DT/HUD_EntityDeath", function()
+	net.Receive("DT/Hud.EntityDeath", function()
 		local duration = DT_Hud.KillfeedDuration:GetFloat()
 		local entry = {
 			time = CurTime(),
@@ -67,13 +67,13 @@ else
 		KILLFEED = {}
 	end)
 
-	hook.Add("DrawDeathNotice", "DT/HUD_HideKillfeed", function()
+	hook.Add("DrawDeathNotice", "DT/Hud.HideKillfeed", function()
 		if DT_Hud.Enabled:GetBool() and DT_Hud.KillfeedEnabled:GetBool() then
 			return false
 		end
 	end)
 
-	hook.Add("DT/HUD_Draw", "DT/HUD_DrawKillfeed", function()
+	hook.Add("DT/Hud.Draw", "DT/Hud.DrawKillfeed", function()
 		if not DT_Hud.KillfeedEnabled:GetBool() then return end
 		local ctx = DT_Hud.DrawContext()
 		ctx:SetOriginWrapping(-1, 1)
@@ -93,7 +93,7 @@ else
 			local leaveOffset = offsetLength - offsetLength * math.min(1, (entry.duration - (CurTime() - entry.time)) * 120 / offsetLength)
 			local offset = -length + math.max(enterOffset, leaveOffset)
 			ctx:MoveOrigin(offset, 0)
-			ctx:HUD_DrawBackground(0, 0, length, 3)
+			ctx:Hud_DrawBackground(0, 0, length, 3)
 			ctx:DrawText(1, 0.85, attackerText, {color = attackerColor, outline = true})
 			ctx:DrawMaterial(1 + attackerLength + middleLength / 2, 1.5, 2, DT_Hud.DeathIcon, true)
 			ctx:DrawText(length - 1, 0.85, victimText, {color = victimColor, xAlign = TEXT_ALIGN_RIGHT, outline = true})
