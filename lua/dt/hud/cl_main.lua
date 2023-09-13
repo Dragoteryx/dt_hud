@@ -66,7 +66,7 @@ end
 DT_Hud.MainColor = DT_Hud.Color("main", Color(204, 204, 221))
 DT_Hud.BackgroundColor = DT_Hud.Color("background", Color(100, 100, 120, 25))
 DT_Hud.HealthColor = DT_Hud.Color("health", Color(107, 164, 61))
-DT_Hud.ArmorColor = DT_Hud.Color("armor", Color(172, 98, 61))
+DT_Hud.ArmorColor = DT_Hud.Color("armor", Color(64, 128, 191))
 DT_Hud.PrimaryAmmoColor = DT_Hud.Color("primary_ammo", Color(204, 204, 221))
 DT_Hud.SecondaryAmmoColor = DT_Hud.Color("secondary_ammo", Color(172, 98, 61))
 DT_Hud.NeutralColor = DT_Hud.Color("neutral", Color(204, 204, 221))
